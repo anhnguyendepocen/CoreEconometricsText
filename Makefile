@@ -13,7 +13,6 @@
 .DELETE_ON_ERROR:
 
 latexmk := latexmk
-crud := .aux .log .out .toc .fdb_latexmk .fls
 latexmkFLAGS := -xelatex -silent
 
 # Note that there is not a dependence on LICENSE.tex; if you plan to
@@ -71,7 +70,9 @@ $(support): %_standalone.pdf: %_standalone.tex %.tex $(latexdeps) | ver
 	$(latexmk) $(latexmkFLAGS) -bibtex- $< && $(latexmk) -c $<
 
 clean:
-	rm -f $(foreach ext,$(crud),*.$(ext)) *~
+	rm -f *~
+	$(foreach doc,$(texts) $(support),$(latexmk) -f -c -silent $(doc));
 
 burn: clean
-	rm -f *.pdf *.dvi
+	rm -f $(foreach doc,$(texts),tex/$(doc:.pdf=)/*.aux)
+	rm -f *.pdf *.dvi *.bbl *.aux
